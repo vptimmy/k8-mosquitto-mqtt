@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mosquitto-mqtt
+
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "helm.selectorLabels" . | nindent 6 }}
+
+  template:
+    metadata:
+      labels:
+        {{- include "helm.selectorLabels" . | nindent 8 }}
+
+    spec:
+      containers:
+        - name: mosquitto-mqtt
+          image: eclipse-mosquitto:2.0.15
+          ports:
+            - containerPort: 1883
+              protocol: TCP
+              name: mqtt
+            - containerPort: 9001
+              protocol: TCP
+              name: mqtt-websocket
+        
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "100Mi"
+            limits:
+              cpu: "1"
+              memory: "512Mi"
+
+          securityContext:
+            runAsUser: 1000
+
+          volumeMounts:
+            - name: mosquitto-data
+              mountPath: /mosquitto
+            - name: mosquitto-conf
+              mountPath: /mosquitto/config/mosquitto.conf
+              subPath: mosquitto.conf
+
+      volumes:
+        - name: mosquitto-conf
+          configMap:
+            name: mosquitto-config
+            items:
+            - key: mosquitto.conf
+              path: mosquitto.conf
+
+        - name: mosquitto-data
+          persistentVolumeClaim:
+            claimName: mosquitto-data

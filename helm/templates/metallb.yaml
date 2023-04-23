@@ -1,0 +1,12 @@
+apiVersion: metallb.io/v1beta1
+kind: IPAddressPool
+metadata:
+  name: mosquitto-mqtt
+  namespace: metallb-system
+  labels:
+    {{- include "helm.selectorLabels" . | nindent 4 }}
+spec:
+  addresses:
+  - 10.0.20.247/32
+  autoAssign: false
+  avoidBuggyIPs: false

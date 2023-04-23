@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mosquitto-config
+  labels:
+    {{- include "helm.selectorLabels" . | nindent 6 }}
+data:
+  mosquitto.conf: |-
+{{ .Files.Get "mosquitto.conf" | indent 4 }}

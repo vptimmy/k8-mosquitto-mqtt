@@ -1,0 +1,4 @@
+## Install
+```
+skaffold deploy
+```
